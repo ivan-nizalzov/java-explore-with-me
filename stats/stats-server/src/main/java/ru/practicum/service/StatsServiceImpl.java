@@ -61,6 +61,9 @@ public class StatsServiceImpl implements StatsService {
     }
 
     private void checkDate(LocalDateTime startTime, LocalDateTime endTime) {
+        if (startTime == null || endTime == null) {
+            throw new StartEndDateTimeException("Error with start time and end time");
+        }
         if (startTime.isAfter(endTime)) {
             throw new StartEndDateTimeException("Error with start time and end time");
         }
