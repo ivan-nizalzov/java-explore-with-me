@@ -29,7 +29,6 @@ import ru.practicum.mapper.event.EventMapper;
 import ru.practicum.mapper.request.RequestMapper;
 import ru.practicum.model.category.Category;
 import ru.practicum.model.event.Event;
-import ru.practicum.model.location.Location;
 import ru.practicum.model.request.Request;
 import ru.practicum.model.event.Sort;
 import ru.practicum.model.event.State;
