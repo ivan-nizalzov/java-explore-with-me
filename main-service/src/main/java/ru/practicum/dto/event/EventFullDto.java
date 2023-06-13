@@ -7,8 +7,8 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import ru.practicum.dto.category.NewCategoryDto;
+import ru.practicum.dto.location.LocationDto;
 import ru.practicum.dto.user.UserShortDto;
-import ru.practicum.model.location.Location;
 import ru.practicum.model.event.State;
 
 import javax.validation.constraints.NotNull;
@@ -33,7 +33,7 @@ public class EventFullDto {
             (shape = JsonFormat.Shape.STRING, pattern = YYYY_MM_DD_HH_MM_SS)
     private LocalDateTime eventDate;
     private UserShortDto initiator;
-    private Location location;
+    private LocationDto location;
     private Boolean paid;
     private Long participantLimit;
     @JsonFormat
@@ -45,5 +45,4 @@ public class EventFullDto {
     @Length(min = 3, max = 120)
     private String title;
     private Long views;
-
 }
