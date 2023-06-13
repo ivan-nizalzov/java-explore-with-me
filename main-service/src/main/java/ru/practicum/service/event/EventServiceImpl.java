@@ -469,14 +469,6 @@ public class EventServiceImpl implements EventService {
         ofNullable(dto.getLocation()).ifPresent(locationDto ->
                 event.setLocation(locationMapper.toLocation(locationDto)));
 
-       /*if (dto.getLocation() != null) {
-            List<Location> locationList = locationRepository.findByLatAndLon(dto.getLocation().getLat(), dto.getLocation().getLon());
-            if (locationList.isEmpty()) {
-                locationRepository.save(locationMapper.toLocation(dto.getLocation()));
-            }
-            event.setLocation(locationMapper.toLocation(dto.getLocation()));
-        }*/
-
         ofNullable(dto.getPaid()).ifPresent(event::setPaid);
         ofNullable(dto.getParticipantLimit()).ifPresent(event::setParticipantLimit);
         ofNullable(dto.getRequestModeration()).ifPresent(event::setRequestModeration);
