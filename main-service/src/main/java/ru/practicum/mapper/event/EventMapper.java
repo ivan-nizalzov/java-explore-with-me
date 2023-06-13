@@ -1,7 +1,6 @@
 package ru.practicum.mapper.event;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import ru.practicum.dto.category.NewCategoryDto;
 import ru.practicum.dto.event.EventFullDto;
@@ -14,6 +13,7 @@ import ru.practicum.mapper.category.CategoryMapper;
 import ru.practicum.mapper.user.UserMapper;
 import ru.practicum.model.category.Category;
 import ru.practicum.model.event.Event;
+import ru.practicum.model.event.State;
 import ru.practicum.model.location.Location;
 import ru.practicum.model.user.User;
 
@@ -44,22 +44,24 @@ public interface EventMapper {
                 .build();
     }
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "annotation", source = "newEventDto.annotation")
-    @Mapping(target = "category", source = "category")
-    @Mapping(target = "confirmedRequests", constant = "0L")
-    @Mapping(target = "description", source = "newEventDto.description")
-    @Mapping(target = "createdOn", source = "dateTime")
-    @Mapping(target = "eventDate", source = "newEventDto.eventDate")
-    @Mapping(target = "initiator", source = "user")
-    @Mapping(target = "location", source = "newEventDto.location")
-    @Mapping(target = "paid", source = "newEventDto.paid")
-    @Mapping(target = "participantLimit", source = "newEventDto.participantLimit")
-    @Mapping(target = "requestModeration", source = "newEventDto.requestModeration")
-    @Mapping(target = "state", ignore = true) // Will be added by setter
-    @Mapping(target = "title", source = "newEventDto.title")
-    @Mapping(target = "views", constant = "0L")
-    Event toEvent(NewEventDto newEventDto, Category category, User user, LocalDateTime dateTime);
+    default Event toEvent(NewEventDto newEventDto, Category category, User user, LocalDateTime dateTime) {
+        return Event.builder()
+                .annotation(newEventDto.getAnnotation())
+                .category(category)
+                .confirmedRequests(0L)
+                .description(newEventDto.getDescription())
+                .createdOn(dateTime)
+                .eventDate(newEventDto.getEventDate())
+                .initiator(user)
+                .location(toLocation(newEventDto.getLocation()))
+                .paid(newEventDto.getPaid())
+                .participantLimit(newEventDto.getParticipantLimit())
+                .requestModeration(newEventDto.getRequestModeration())
+                .state(State.PENDING)
+                .title(newEventDto.getTitle())
+                .views(0L)
+                .build();
+    }
 
     default EventShortDto toEventShortDto(Event event) {
         return EventShortDto.builder()
@@ -85,5 +87,9 @@ public interface EventMapper {
 
     default LocationDto toLocationDto(Location location) {
         return Mappers.getMapper(LocationMapper.class).toLocationDto(location);
+    }
+
+    default Location toLocation(LocationDto locationDto) {
+        return Mappers.getMapper(LocationMapper.class).toLocation(locationDto);
     }
 }
