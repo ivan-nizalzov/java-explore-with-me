@@ -7,17 +7,20 @@ import ru.practicum.dto.category.NewCategoryDto;
 import ru.practicum.dto.event.EventFullDto;
 import ru.practicum.dto.event.EventShortDto;
 import ru.practicum.dto.event.NewEventDto;
+import ru.practicum.dto.location.LocationDto;
 import ru.practicum.dto.user.UserShortDto;
+import ru.practicum.mapper.LocationMapper;
 import ru.practicum.mapper.category.CategoryMapper;
 import ru.practicum.mapper.user.UserMapper;
 import ru.practicum.model.category.Category;
 import ru.practicum.model.event.Event;
+import ru.practicum.model.location.Location;
 import ru.practicum.model.user.User;
 
 import java.time.LocalDateTime;
 
 
-@Mapper(componentModel = "spring", uses = {CategoryMapper.class, UserMapper.class})
+@Mapper(componentModel = "spring", uses = {CategoryMapper.class, UserMapper.class, LocationMapper.class})
 public interface EventMapper {
 
     default EventFullDto toEventFullDto(Event event) {
@@ -30,7 +33,7 @@ public interface EventMapper {
                 .description(event.getDescription())
                 .eventDate(event.getEventDate())
                 .initiator(toUserShortDto(event.getInitiator()))
-                .location(event.getLocation())
+                .location(toLocationDto(event.getLocation()))
                 .paid(event.getPaid())
                 .participantLimit(event.getParticipantLimit())
                 .publishedOn((event.getPublishedOn() == null) ? null : event.getPublishedOn())
@@ -78,5 +81,9 @@ public interface EventMapper {
 
     default UserShortDto toUserShortDto(User user) {
         return Mappers.getMapper(UserMapper.class).toUserShortDto(user);
+    }
+
+    default LocationDto toLocationDto(Location location) {
+        return Mappers.getMapper(LocationMapper.class).toLocationDto(location);
     }
 }

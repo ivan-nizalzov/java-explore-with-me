@@ -23,6 +23,7 @@ import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.BadStateException;
+import ru.practicum.mapper.LocationMapper;
 import ru.practicum.mapper.event.EventMapper;
 import ru.practicum.mapper.request.RequestMapper;
 import ru.practicum.model.category.Category;
@@ -65,6 +66,7 @@ public class EventServiceImpl implements EventService {
     private final StatsClient statClient;
     private final EventMapper eventMapper;
     private final RequestMapper requestMapper;
+    private final LocationMapper locationMapper;
 
     @Transactional
     public EventFullDto createEvent(Long userId, NewEventDto dto) {
@@ -84,7 +86,7 @@ public class EventServiceImpl implements EventService {
         Category category = getCategoryById(dto.getCategory());
         User user = getUserById(userId);
 
-        locationRepository.save(dto.getLocation());
+        locationRepository.save(locationMapper.toLocation(dto.getLocation()));
         Event event = eventMapper.toEvent(dto, category, user, nowDateTime);
         event.setState(State.PENDING); // See EventMapper.toEvent()
         log.info("Created new event=" + event);
@@ -464,9 +466,9 @@ public class EventServiceImpl implements EventService {
         if (dto.getLocation() != null) {
             List<Location> location = locationRepository.findByLatAndLon(dto.getLocation().getLat(), dto.getLocation().getLon());
             if (location.isEmpty()) {
-                locationRepository.save(dto.getLocation());
+                locationRepository.save(locationMapper.toLocation(dto.getLocation()));
             }
-            event.setLocation(dto.getLocation());
+            event.setLocation(locationMapper.toLocation(dto.getLocation()));
         }
 
         ofNullable(dto.getPaid()).ifPresent(event::setPaid);
