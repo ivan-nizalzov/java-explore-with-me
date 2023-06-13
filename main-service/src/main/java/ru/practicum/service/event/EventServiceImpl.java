@@ -16,6 +16,7 @@ import ru.practicum.dto.event.EventFullDto;
 import ru.practicum.dto.event.EventShortDto;
 import ru.practicum.dto.event.NewEventDto;
 import ru.practicum.dto.event.UpdateEventDto;
+import ru.practicum.dto.location.LocationDto;
 import ru.practicum.dto.request.EventRequestStatusUpdateRequest;
 import ru.practicum.dto.request.EventRequestStatusUpdateResult;
 import ru.practicum.dto.request.ParticipationRequestDto;
@@ -23,7 +24,7 @@ import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.BadStateException;
-import ru.practicum.mapper.LocationMapper;
+import ru.practicum.mapper.location.LocationMapper;
 import ru.practicum.mapper.event.EventMapper;
 import ru.practicum.mapper.request.RequestMapper;
 import ru.practicum.model.category.Category;
@@ -86,12 +87,13 @@ public class EventServiceImpl implements EventService {
         Category category = getCategoryById(dto.getCategory());
         User user = getUserById(userId);
 
-        locationRepository.save(locationMapper.toLocation(dto.getLocation()));
+        locationRepository.save(locationMapper.toLocation(getLocationFromDto(dto)));
         Event event = eventMapper.toEvent(dto, category, user, nowDateTime);
         event.setState(State.PENDING); // See EventMapper.toEvent()
+        Event result = eventRepository.save(event);
         log.info("Created new event=" + event);
 
-        return eventMapper.toEventFullDto(eventRepository.save(event));
+        return eventMapper.toEventFullDto(result);
     }
 
     public List<EventShortDto> findEventsCreatedByUser(Long userId, Integer from, Integer size) {
@@ -149,12 +151,13 @@ public class EventServiceImpl implements EventService {
         }
 
         Event updatedEvent = updateEventFields(event, dto);
-        Event updatedEventFromDB = eventRepository.save(updatedEvent);
-        Map<Long, Long> hits = getStatisticFromListEvents(List.of(updatedEventFromDB));
+        Event result = eventRepository.save(updatedEvent);
+        locationRepository.save(result.getLocation());
+        Map<Long, Long> hits = getStatisticFromListEvents(List.of(result));
         event.setViews(hits.get(event.getId()));
         log.info("Updated event with id=" + eventId + " created by user with id=" + userId);
 
-        return eventMapper.toEventFullDto(updatedEventFromDB);
+        return eventMapper.toEventFullDto(result);
     }
 
     public List<EventFullDto> searchEventsForAdminWithFiltres(
@@ -457,19 +460,22 @@ public class EventServiceImpl implements EventService {
 
     private Event updateEventFields(Event event, UpdateEventDto dto) {
         ofNullable(dto.getAnnotation()).ifPresent(event::setAnnotation);
+
         ofNullable(dto.getCategory()).ifPresent(category -> event.setCategory(categoryRepository.findById(category)
                 .orElseThrow(() -> new NotFoundException("CategoryId not found"))));
-        ofNullable(dto.getDescription()).ifPresent(event::setDescription);
-        ofNullable(dto.getEventDate()).ifPresent(
-                event::setEventDate);
 
-        if (dto.getLocation() != null) {
-            List<Location> location = locationRepository.findByLatAndLon(dto.getLocation().getLat(), dto.getLocation().getLon());
-            if (location.isEmpty()) {
+        ofNullable(dto.getDescription()).ifPresent(event::setDescription);
+        ofNullable(dto.getEventDate()).ifPresent(event::setEventDate);
+        ofNullable(dto.getLocation()).ifPresent(locationDto ->
+                event.setLocation(locationMapper.toLocation(locationDto)));
+
+       /*if (dto.getLocation() != null) {
+            List<Location> locationList = locationRepository.findByLatAndLon(dto.getLocation().getLat(), dto.getLocation().getLon());
+            if (locationList.isEmpty()) {
                 locationRepository.save(locationMapper.toLocation(dto.getLocation()));
             }
             event.setLocation(locationMapper.toLocation(dto.getLocation()));
-        }
+        }*/
 
         ofNullable(dto.getPaid()).ifPresent(event::setPaid);
         ofNullable(dto.getParticipantLimit()).ifPresent(event::setParticipantLimit);
@@ -503,5 +509,13 @@ public class EventServiceImpl implements EventService {
     private User getUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id=" + userId + " not found"));
+    }
+
+    private LocationDto getLocationFromDto(NewEventDto dto) {
+        if (dto.getLocation() == null) {
+            return null;
+        } else {
+            return dto.getLocation();
+        }
     }
 }

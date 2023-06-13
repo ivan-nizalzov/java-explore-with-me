@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class LocationDto {
 
-    private float lat;
-    private float lon;
+    private Float lat;
+    private Float lon;
 }

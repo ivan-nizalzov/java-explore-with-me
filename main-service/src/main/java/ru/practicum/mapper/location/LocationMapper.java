@@ -1,4 +1,4 @@
-package ru.practicum.mapper;
+package ru.practicum.mapper.location;
 
 import org.mapstruct.Mapper;
 import ru.practicum.dto.location.LocationDto;
