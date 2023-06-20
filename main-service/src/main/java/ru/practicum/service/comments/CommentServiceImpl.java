@@ -1,6 +1,7 @@
 package ru.practicum.service.comments;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.dto.comment.CommentDto;
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -42,12 +44,14 @@ public class CommentServiceImpl implements CommentService {
 
         Comment eventComment = commentMapper.toComment(commentDto, event, user, LocalDateTime.now());
         Comment newEventComment = commentRepository.save(eventComment);
+        log.info("Created new comment by userId={} for event with id={}", userId, eventId);
 
         return commentMapper.toCommentDto(newEventComment);
     }
 
     public CommentDto findCommentById(Long commentId) {
         Comment eventComment = getCommentById(commentId);
+        log.info("Found comment with id={}", commentId);
 
         return commentMapper.toCommentDto(eventComment);
     }
@@ -61,6 +65,7 @@ public class CommentServiceImpl implements CommentService {
             throw new ConflictException("Only the author may delete comment with id=" + commentId +
                     ". User with id=" + userId + " is not the author");
         }
+        log.info("Deleted comment with id={}", commentId);
 
         commentRepository.deleteById(commentId);
     }
@@ -77,6 +82,7 @@ public class CommentServiceImpl implements CommentService {
 
         eventComment.setText(commentDto.getText());
         Comment updatedEventComment = commentRepository.save(eventComment);
+        log.info("Updated comment with id={} by userId={} for eventId={}", commentId, userId, eventId);
 
         return commentMapper.toCommentDto(updatedEventComment);
     }
@@ -85,6 +91,7 @@ public class CommentServiceImpl implements CommentService {
         Event event = findEventById(eventId);
         PageRequest page = PageRequest.of(from, size);
         List<Comment> commentList = commentRepository.findByEvent(event, page);
+        log.info("Found comments for eventId={}", eventId);
 
         return commentList.stream()
                 .map(commentMapper::toCommentDto)
@@ -104,6 +111,7 @@ public class CommentServiceImpl implements CommentService {
         }
 
         List<Comment> eventComments = commentRepository.getCommentsByFilters(text, user, event, page);
+        log.info("Found comments by filters for eventId={}", eventId);
 
         return eventComments.stream()
                 .map(commentMapper::toCommentDto)
@@ -113,6 +121,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public void deleteCommentByAdmin(Long commentId) {
         commentRepository.deleteById(commentId);
+        log.info("Deleted comment with id={} bye admin", commentId);
     }
 
     @Transactional
@@ -121,6 +130,7 @@ public class CommentServiceImpl implements CommentService {
 
         eventComment.setText(commentDto.getText());
         Comment updatedEventComment = commentRepository.save(eventComment);
+        log.info("Updated comment with id={} by admin", commentId);
 
         return commentMapper.toCommentDto(updatedEventComment);
     }

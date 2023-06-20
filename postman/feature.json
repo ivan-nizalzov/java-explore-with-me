@@ -771,7 +771,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/comments/event/:idEvent",
+					"raw": "http://localhost:8080/comments/event/:eventId",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -780,11 +780,11 @@
 					"path": [
 						"comments",
 						"event",
-						":idEvent"
+						":eventId"
 					],
 					"variable": [
 						{
-							"key": "idEvent",
+							"key": "eventId",
 							"value": "106"
 						}
 					]
@@ -831,7 +831,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/comments?idUser=136",
+					"raw": "http://localhost:8080/comments?userId=136",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -842,7 +842,7 @@
 					],
 					"query": [
 						{
-							"key": "idUser",
+							"key": "userId",
 							"value": "136"
 						}
 					]
@@ -956,7 +956,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/comments?text=коММентаРий&idUser=136",
+					"raw": "http://localhost:8080/comments?text=коММентаРий&userId=136",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -971,7 +971,7 @@
 							"value": "коММентаРий"
 						},
 						{
-							"key": "idUser",
+							"key": "userId",
 							"value": "136"
 						}
 					]

@@ -29,8 +29,8 @@ public class PrivateCommentController {
 
     @PostMapping
     public ResponseEntity<CommentDto> createComment(
-            @PathVariable Long userId,
-            @PathVariable Long eventId,
+            @PathVariable("userId") Long userId,
+            @PathVariable("eventId") Long eventId,
             @RequestBody @Valid NewCommentDto commentDto) {
 
         log.info("Create Comment from userId {}, eventId {}, commentDto {}", userId, eventId, commentDto);
@@ -40,9 +40,9 @@ public class PrivateCommentController {
     @DeleteMapping("{commentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> deleteComment(
-            @PathVariable Long userId,
-            @PathVariable Long eventId,
-            @PathVariable Long commentId) {
+            @PathVariable("userId") Long userId,
+            @PathVariable("eventId") Long eventId,
+            @PathVariable("commentId") Long commentId) {
 
         log.info("Delete comment with userId {}, eventId {}, commentId {}", userId, eventId, commentId);
         commentService.deleteCommentByUser(userId, eventId, commentId);
@@ -51,9 +51,9 @@ public class PrivateCommentController {
 
     @PatchMapping("{commentId}")
     public ResponseEntity<CommentDto> updateComment(
-            @PathVariable Long userId,
-            @PathVariable Long eventId,
-            @PathVariable Long commentId,
+            @PathVariable("userId") Long userId,
+            @PathVariable("eventId") Long eventId,
+            @PathVariable("commentId") Long commentId,
             @RequestBody @Valid NewCommentDto commentDto) {
 
         log.info("Update comment with userId {}, eventId {}, commentId {}, commentDto {}",
