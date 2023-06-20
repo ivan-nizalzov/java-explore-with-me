@@ -38,7 +38,7 @@ public class CommentServiceImpl implements CommentService {
         Event event = findEventById(eventId);
 
         if (!event.getState().equals(State.PUBLISHED)) {
-            throw new ConflictException("Cannot add comment: the event with id=" + eventId +
+            throw new ConflictException("Cannot add comment: event with id=" + eventId +
                     " is not published yet");
         }
 
