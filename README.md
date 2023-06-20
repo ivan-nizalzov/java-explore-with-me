@@ -8,7 +8,7 @@ The API consists of three paths:
 2. `/private` for authorized users;
 3. `/public` for all users.
 
-ExploreWithMe allows users to publish events, commetn events, send participation requests, review event compilations prepared by moderators, and search for events.
+ExploreWithMe allows users to publish events, comment events, send participation requests, review event compilations prepared by moderators, and search for events.
 
 ### Tech stack:
 ExploreWithMe adopts a microservices architecture, comprising a main service and a statistics service that collects statistics on event views by users. Communication between services is done via HTTP using RestTemplate from Spring Framework.
