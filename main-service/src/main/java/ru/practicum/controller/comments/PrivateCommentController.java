@@ -18,6 +18,7 @@ import ru.practicum.dto.comment.NewCommentDto;
 import ru.practicum.service.comments.CommentService;
 
 import javax.validation.Valid;
+
 @Slf4j
 @Validated
 @RestController
@@ -25,7 +26,6 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class PrivateCommentController {
     private final CommentService commentService;
-
 
     @PostMapping
     public ResponseEntity<CommentDto> createComment(
